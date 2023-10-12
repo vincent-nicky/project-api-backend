@@ -15,7 +15,7 @@ public class NameController {
 
     @GetMapping("/get")
     public String getNameByGet(String name, HttpServletRequest request) {
-        System.out.println(request.getHeader("yupi"));
+        System.out.println(request.getHeader("wsj"));
         return "GET 你的名字是" + name;
     }
 
