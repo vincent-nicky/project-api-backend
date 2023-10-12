@@ -1,0 +1,60 @@
+package com.wsj.apiapp.controller;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.wsj.apiapp.annotation.AuthCheck;
+import com.wsj.apiapp.common.BaseResponse;
+import com.wsj.apiapp.common.ErrorCode;
+import com.wsj.apiapp.common.ResultUtils;
+import com.wsj.apiapp.exception.BusinessException;
+import com.wsj.apiapp.mapper.UserInterfaceInfoMapper;
+import com.wsj.apiapp.model.vo.InterfaceInfoVO;
+import com.wsj.apiapp.service.InterfaceInfoService;
+import com.wsj.apicommon.model.entity.InterfaceInfo;
+import com.wsj.apicommon.model.entity.UserInterfaceInfo;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ * 分析控制器
+ *
+ */
+@RestController
+@RequestMapping("/analysis")
+@Slf4j
+public class AnalysisController {
+
+    @Resource
+    private UserInterfaceInfoMapper userInterfaceInfoMapper;
+
+    @Resource
+    private InterfaceInfoService interfaceInfoService;
+
+    @GetMapping("/top/interface/invoke")
+    @AuthCheck(mustRole = "admin")
+    public BaseResponse<List<InterfaceInfoVO>> listTopInvokeInterfaceInfo() {
+        List<UserInterfaceInfo> userInterfaceInfoList = userInterfaceInfoMapper.listTopInvokeInterfaceInfo(3);
+        Map<Long, List<UserInterfaceInfo>> interfaceInfoIdObjMap = userInterfaceInfoList.stream()
+                .collect(Collectors.groupingBy(UserInterfaceInfo::getInterfaceInfoId));
+        QueryWrapper<InterfaceInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("id", interfaceInfoIdObjMap.keySet());
+        List<InterfaceInfo> list = interfaceInfoService.list(queryWrapper);
+        if (CollectionUtils.isEmpty(list)) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+        }
+        List<InterfaceInfoVO> interfaceInfoVOList = list.stream().map(interfaceInfo -> {
+            InterfaceInfoVO interfaceInfoVO = new InterfaceInfoVO();
+            BeanUtils.copyProperties(interfaceInfo, interfaceInfoVO);
+            int totalNum = interfaceInfoIdObjMap.get(interfaceInfo.getId()).get(0).getTotalNum();
+            interfaceInfoVO.setTotalNum(totalNum);
+            return interfaceInfoVO;
+        }).collect(Collectors.toList());
+        return ResultUtils.success(interfaceInfoVOList);
+    }
+}
