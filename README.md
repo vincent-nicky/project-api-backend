@@ -1,6 +1,6 @@
 # api接口项目（开发中...）
 
-导入指定的SDK包后，使用AK、SK验证成功，才能成功调用
+导入指定的SDK包后，使用AK、SK验证成功后才能调用api接口
 
 Gateway参考：https://blog.csdn.net/zlt2000/article/details/106992879/
 
