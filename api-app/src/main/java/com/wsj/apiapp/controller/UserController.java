@@ -121,13 +121,18 @@ public class UserController {
         if (userAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        User user = new User();
-        BeanUtils.copyProperties(userAddRequest, user);
-        boolean result = userService.save(user);
-        if (!result) {
+        long result = userService.userRegister(userAddRequest.getUserAccount(), userAddRequest.getUserPassword(), userAddRequest.getUserPassword());
+        if (result < 1 ) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
         }
-        return ResultUtils.success(user.getId());
+        return ResultUtils.success(result);
+//        User user = new User();
+//        BeanUtils.copyProperties(userAddRequest, user);
+//        boolean result = userService.save(user);
+//        if (!result) {
+//            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+//        }
+//        return ResultUtils.success(user.getId());
     }
 
     /**

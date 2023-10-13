@@ -19,6 +19,7 @@ import static com.wsj.apiclientsdk.utils.SignUtils.genSign;
 public class ApiClient {
 
     private static final String GATEWAY_HOST = "http://localhost:8090";
+    private static final String URL = "/api/name/user";
 
     private String accessKey;
 
@@ -61,13 +62,18 @@ public class ApiClient {
 
     public String getUsernameByPost(ApiClientUser apiClientUser) {
         String json = JSONUtil.toJsonStr(apiClientUser);
-        HttpResponse httpResponse = HttpRequest.post(GATEWAY_HOST + "/api/name/user")
+        // TODO getUsernameByPost
+        HttpResponse httpResponse = HttpRequest.post(GATEWAY_HOST + URL)
                 .addHeaders(getHeaderMap(json))
                 .body(json)
                 .execute();
+
         System.out.println(httpResponse.getStatus());
+
         String result = httpResponse.body();
+
         System.out.println(result);
+
         return result;
     }
 }

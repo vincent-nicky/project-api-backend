@@ -1,6 +1,8 @@
 package com.wsj.apiclientsdk.utils;
 
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.DigestAlgorithm;
+import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.crypto.digest.Digester;
 
 /**

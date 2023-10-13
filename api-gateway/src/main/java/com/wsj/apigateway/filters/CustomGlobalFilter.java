@@ -1,4 +1,4 @@
-package com.wsj.apigateway;
+package com.wsj.apigateway.filters;
 
 import com.wsj.apiclientsdk.utils.SignUtils;
 import com.wsj.apicommon.model.entity.InterfaceInfo;
@@ -64,47 +64,21 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         String sourceAddress = request.getLocalAddress().getHostString();
         log.info("请求来源地址：" + sourceAddress);
         log.info("请求来源地址：" + request.getRemoteAddress());
+
         ServerHttpResponse response = exchange.getResponse();
+
         // 2. 访问控制 - 黑白名单
-        if (!IP_WHITE_LIST.contains(sourceAddress)) {
-            response.setStatusCode(HttpStatus.FORBIDDEN);
-            return response.setComplete();
-        }
+//        if (!IP_WHITE_LIST.contains(sourceAddress)) {
+//            response.setStatusCode(HttpStatus.FORBIDDEN);
+//            return response.setComplete();
+//        }
+
         // 3. 用户鉴权（判断 ak、sk 是否合法）
-        HttpHeaders headers = request.getHeaders();
-        String accessKey = headers.getFirst("accessKey");
-        String nonce = headers.getFirst("nonce");
-        String timestamp = headers.getFirst("timestamp");
-        String sign = headers.getFirst("sign");
-        String body = headers.getFirst("body");
-        // todo 实际情况应该是去数据库中查是否已分配给用户
-        User invokeUser = null;
-        try {
-            invokeUser = innerUserService.getInvokeUser(accessKey);
-        } catch (Exception e) {
-            log.error("getInvokeUser error", e);
-        }
+        User invokeUser = AuthFilter.authFilter(request);
         if (invokeUser == null) {
             return handleNoAuth(response);
         }
-//        if (!"yupi".equals(accessKey)) {
-//            return handleNoAuth(response);
-//        }
-        if (Long.parseLong(nonce) > 10000L) {
-            return handleNoAuth(response);
-        }
-        // 时间和当前时间不能超过 5 分钟
-        Long currentTime = System.currentTimeMillis() / 1000;
-        final Long FIVE_MINUTES = 60 * 5L;
-        if ((currentTime - Long.parseLong(timestamp)) >= FIVE_MINUTES) {
-            return handleNoAuth(response);
-        }
-        // 实际情况中是从数据库中查出 secretKey
-        String secretKey = invokeUser.getSecretKey();
-        String serverSign = SignUtils.genSign(body, secretKey);
-        if (sign == null || !sign.equals(serverSign)) {
-            return handleNoAuth(response);
-        }
+
         // 4. 请求的模拟接口是否存在，以及请求方法是否匹配
         InterfaceInfo interfaceInfo = null;
         try {
