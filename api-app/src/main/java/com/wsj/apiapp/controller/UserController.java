@@ -4,11 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 
-import com.wsj.apiapp.common.BaseResponse;
-import com.wsj.apiapp.common.DeleteRequest;
-import com.wsj.apiapp.common.ErrorCode;
-import com.wsj.apiapp.common.ResultUtils;
-import com.wsj.apiapp.exception.BusinessException;
+import com.wsj.apicommon.common.BaseResponse;
+import com.wsj.apicommon.common.DeleteRequest;
+import com.wsj.apicommon.common.ErrorCode;
+import com.wsj.apicommon.common.ResultUtils;
+import com.wsj.apicommon.exception.BusinessException;
 import com.wsj.apiapp.model.dto.user.*;
 import com.wsj.apiapp.model.vo.UserVO;
 import com.wsj.apiapp.service.UserService;

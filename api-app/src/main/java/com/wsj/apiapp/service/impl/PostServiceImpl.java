@@ -2,8 +2,8 @@ package com.wsj.apiapp.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-import com.wsj.apiapp.common.ErrorCode;
-import com.wsj.apiapp.exception.BusinessException;
+import com.wsj.apicommon.common.ErrorCode;
+import com.wsj.apicommon.exception.BusinessException;
 import com.wsj.apiapp.mapper.PostMapper;
 import com.wsj.apiapp.service.PostService;
 import com.wsj.apicommon.model.enums.PostGenderEnum;

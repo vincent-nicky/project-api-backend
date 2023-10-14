@@ -1,7 +1,7 @@
-package com.wsj.apiapp.exception;
+package com.wsj.apicommon.exception;
 
 
-import com.wsj.apiapp.common.ErrorCode;
+import com.wsj.apicommon.common.ErrorCode;
 
 /**
  * 自定义异常类

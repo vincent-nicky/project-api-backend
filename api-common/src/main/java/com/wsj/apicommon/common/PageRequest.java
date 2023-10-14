@@ -1,4 +1,4 @@
-package com.wsj.apiapp.common;
+package com.wsj.apicommon.common;
 
 import com.wsj.apiapp.constant.CommonConstant;
 import lombok.Data;

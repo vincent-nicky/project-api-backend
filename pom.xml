@@ -26,7 +26,8 @@
         <module>api-gateway</module>
         <module>api-client-sdk</module>
         <module>api-app</module>
-        <module>api-interface</module>
+        <module>api-interface-getname</module>
+        <module>api-innerinterface</module>
     </modules>
 
     <dependencies>

@@ -1,4 +1,4 @@
-package com.wsj.apiapp.constant;
+package com.wsj.apicommon.constant;
 
 /**
  * 通用常量

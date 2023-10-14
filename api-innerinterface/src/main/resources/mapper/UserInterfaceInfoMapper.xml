@@ -3,7 +3,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wsj.apiapp.mapper.UserInterfaceInfoMapper">
+<mapper namespace="com.wsj.apiinnerinterface.mapper.UserInterfaceInfoMapper">
 
     <resultMap id="BaseResultMap" type="com.wsj.apicommon.model.entity.UserInterfaceInfo">
             <id property="id" column="id" jdbcType="BIGINT"/>

@@ -1,4 +1,6 @@
-package com.wsj.apiapp.common;
+package com.wsj.apicommon.common;
+
+// https://space.bilibili.com/12890453/
 
 import lombok.Data;
 
@@ -9,7 +11,7 @@ import java.io.Serializable;
  *
  */
 @Data
-public class DeleteRequest implements Serializable {
+public class IdRequest implements Serializable {
     /**
      * id
      */

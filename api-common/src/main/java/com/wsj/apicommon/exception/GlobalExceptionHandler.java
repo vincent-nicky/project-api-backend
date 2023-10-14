@@ -1,4 +1,4 @@
-package com.wsj.apiapp.exception;
+package com.wsj.apicommon.exception;
 
 import com.wsj.apiapp.common.BaseResponse;
 import com.wsj.apiapp.common.ErrorCode;

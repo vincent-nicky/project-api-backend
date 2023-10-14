@@ -5,8 +5,8 @@ import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-import com.wsj.apiapp.common.ErrorCode;
-import com.wsj.apiapp.exception.BusinessException;
+import com.wsj.apicommon.common.ErrorCode;
+import com.wsj.apicommon.exception.BusinessException;
 import com.wsj.apiapp.mapper.UserMapper;
 import com.wsj.apiapp.service.UserService;
 import com.wsj.apicommon.model.entity.User;
@@ -18,7 +18,7 @@ import org.springframework.util.DigestUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import static com.wsj.apiapp.constant.UserConstant.*;
+import static com.wsj.apicommon.constant.UserConstant.*;
 
 
 /**

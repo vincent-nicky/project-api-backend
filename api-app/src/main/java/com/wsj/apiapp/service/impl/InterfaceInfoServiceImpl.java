@@ -2,9 +2,8 @@ package com.wsj.apiapp.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-import com.wsj.apiapp.common.ErrorCode;
-import com.wsj.apiapp.exception.BusinessException;
-import com.wsj.apiapp.mapper.InterfaceInfoMapper;
+import com.wsj.apicommon.common.ErrorCode;
+import com.wsj.apicommon.exception.BusinessException;
 import com.wsj.apiapp.service.InterfaceInfoService;
 import com.wsj.apicommon.model.entity.InterfaceInfo;
 import org.apache.commons.lang3.StringUtils;

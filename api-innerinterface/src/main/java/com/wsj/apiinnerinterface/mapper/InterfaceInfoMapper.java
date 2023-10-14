@@ -1,4 +1,4 @@
-package com.wsj.apiapp.mapper;
+package com.wsj.apiinnerinterface.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.wsj.apicommon.model.entity.InterfaceInfo;

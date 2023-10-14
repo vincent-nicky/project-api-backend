@@ -1,7 +1,7 @@
 package com.wsj.apiapp.model.dto.userinterfaceinfo;
 
 
-import com.wsj.apiapp.common.PageRequest;
+import com.wsj.apicommon.common.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

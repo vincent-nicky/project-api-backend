@@ -2,8 +2,8 @@ package com.wsj.apiapp.aop;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.wsj.apiapp.annotation.AuthCheck;
-import com.wsj.apiapp.common.ErrorCode;
-import com.wsj.apiapp.exception.BusinessException;
+import com.wsj.apicommon.common.ErrorCode;
+import com.wsj.apicommon.exception.BusinessException;
 import com.wsj.apiapp.service.UserService;
 import com.wsj.apicommon.model.entity.User;
 import org.apache.commons.lang3.StringUtils;

@@ -10,7 +10,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>api-interface</artifactId>
+    <artifactId>api-interface-getname</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

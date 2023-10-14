@@ -1,12 +1,12 @@
-package com.wsj.apiapp.service.impl.inner;
+package com.wsj.apiinnerinterface.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
-import com.wsj.apiapp.common.ErrorCode;
-import com.wsj.apiapp.exception.BusinessException;
-import com.wsj.apiapp.mapper.InterfaceInfoMapper;
+import com.wsj.apicommon.common.ErrorCode;
+import com.wsj.apicommon.exception.BusinessException;
 import com.wsj.apicommon.model.entity.InterfaceInfo;
 import com.wsj.apicommon.service.InnerInterfaceInfoService;
+import com.wsj.apiinnerinterface.mapper.InterfaceInfoMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboService;
 

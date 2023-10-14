@@ -2,10 +2,10 @@ package com.wsj.apiapp.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wsj.apiapp.annotation.AuthCheck;
-import com.wsj.apiapp.common.BaseResponse;
-import com.wsj.apiapp.common.ErrorCode;
-import com.wsj.apiapp.common.ResultUtils;
-import com.wsj.apiapp.exception.BusinessException;
+import com.wsj.apicommon.common.BaseResponse;
+import com.wsj.apicommon.common.ErrorCode;
+import com.wsj.apicommon.common.ResultUtils;
+import com.wsj.apicommon.exception.BusinessException;
 import com.wsj.apiapp.mapper.UserInterfaceInfoMapper;
 import com.wsj.apiapp.model.vo.InterfaceInfoVO;
 import com.wsj.apiapp.service.InterfaceInfoService;
