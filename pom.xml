@@ -23,11 +23,11 @@
 
     <modules>
         <module>api-common</module>
-        <module>api-gateway</module>
+        <module>api-consumer-gateway</module>
         <module>api-client-sdk</module>
-        <module>api-app</module>
+        <module>api-consumer-app</module>
         <module>api-interface-getname</module>
-        <module>api-innerinterface</module>
+        <module>api-provider-mysql</module>
     </modules>
 
     <dependencies>
@@ -69,7 +69,7 @@
             <dependency>
                 <groupId>org.apache.dubbo</groupId>
                 <artifactId>dubbo</artifactId>
-                <version>3.2.7</version>
+                <version>3.1.11</version>
             </dependency>
 
             <!-- https://mvnrepository.com/artifact/com.alibaba.nacos/nacos-client -->

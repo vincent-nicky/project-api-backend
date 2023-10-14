@@ -1,8 +1,8 @@
 package com.wsj.apicommon.exception;
 
-import com.wsj.apiapp.common.BaseResponse;
-import com.wsj.apiapp.common.ErrorCode;
-import com.wsj.apiapp.common.ResultUtils;
+import com.wsj.apicommon.common.BaseResponse;
+import com.wsj.apicommon.common.ErrorCode;
+import com.wsj.apicommon.common.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

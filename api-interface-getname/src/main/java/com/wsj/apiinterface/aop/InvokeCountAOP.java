@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class InvokeCountAOP {
 
-//    @Resource
+//    @Autowired
 //    private UserInterfaceInfoService userInterfaceInfoService;
 
     // 伪代码
