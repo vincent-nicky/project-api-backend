@@ -2,9 +2,6 @@ package com.wsj.apiconsumerapp.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.google.gson.Gson;
-import com.wsj.apiclientsdk.client.ApiClient;
-import com.wsj.apiclientsdk.model.ApiClientUser;
 import com.wsj.apicommon.common.*;
 import com.wsj.apicommon.constant.CommonConstant;
 import com.wsj.apicommon.exception.BusinessException;
@@ -12,12 +9,13 @@ import com.wsj.apicommon.model.entity.InterfaceInfo;
 import com.wsj.apicommon.model.entity.User;
 import com.wsj.apicommon.model.enums.InterfaceInfoStatusEnum;
 import com.wsj.apicommon.service.InterfaceInfoService;
-import com.wsj.apicommon.service.UserService;
+import com.wsj.apiconsumerapp.service.UserService;
 import com.wsj.apiconsumerapp.annotation.AuthCheck;
-import com.wsj.apiconsumerapp.model.dto.interfaceinfo.InterfaceInfoAddRequest;
-import com.wsj.apiconsumerapp.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
-import com.wsj.apiconsumerapp.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
-import com.wsj.apiconsumerapp.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
+import com.wsj.apiconsumerapp.manager.MyApiClientManager;
+import com.wsj.apicommon.model.dto.interfaceinfo.InterfaceInfoAddRequest;
+import com.wsj.apicommon.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
+import com.wsj.apicommon.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
+import com.wsj.apicommon.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -43,7 +41,7 @@ public class InterfaceInfoController {
     private UserService userService;
 
     @Autowired
-    private ApiClient apiClient;
+    private MyApiClientManager myApiClientManager;
 
     // region 增删改查
 
@@ -220,18 +218,22 @@ public class InterfaceInfoController {
         if (oldInterfaceInfo == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-        // 判断该接口是否可以调用
-        ApiClientUser user = new ApiClientUser();
-        user.setUsername("test");
-        String username = apiClient.getUsernameByPost(user);
-        if (StringUtils.isBlank(username)) {
+
+        // 处理从前端传过来的接口调用请求（管理员调用：使用yml配置文件中的ak、sk）
+        // TODO 这里 interfaceUrl 应该接收前端所指定的url，interfaceParamsJson应该在前端处理好再传过来
+        String interfaceParamsJson = "{\"name\":\"test\"}";
+        String resultInvoke =  myApiClientManager.invokeInterface("/api/name/user",interfaceParamsJson);
+
+        if (StringUtils.isBlank(resultInvoke)) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口验证失败");
         }
+
         // 仅本人或管理员可修改
         InterfaceInfo interfaceInfo = new InterfaceInfo();
         interfaceInfo.setId(id);
         interfaceInfo.setStatus(InterfaceInfoStatusEnum.ONLINE.getValue());
         boolean result = interfaceInfoService.updateById(interfaceInfo);
+
         return ResultUtils.success(result);
     }
 
@@ -286,14 +288,15 @@ public class InterfaceInfoController {
         if (oldInterfaceInfo.getStatus() == InterfaceInfoStatusEnum.OFFLINE.getValue()) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口已关闭");
         }
+
         User loginUser = userService.getLoginUser(request);
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
-        ApiClient tempClient = new ApiClient(accessKey, secretKey);
-        Gson gson = new Gson();
-        ApiClientUser user = gson.fromJson(userRequestParams, ApiClientUser.class);
-        String usernameByPost = tempClient.getUsernameByPost(user);
-        return ResultUtils.success(usernameByPost);
+        // TODO 这里 interfaceUrl 应该接收前端所指定的url，interfaceParamsJson应该在前端处理好再传过来
+        String interfaceParamsJson = "{\"name\":\"test\"}";
+        String resultInvoke =  myApiClientManager.invokeInterface(accessKey,secretKey,"/api/name/user",interfaceParamsJson);
+
+        return ResultUtils.success(resultInvoke);
     }
 
 }

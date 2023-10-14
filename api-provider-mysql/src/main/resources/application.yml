@@ -1,7 +1,7 @@
 # 公共配置文件
 spring:
   application:
-    name: api-innerinerface
+    name: api-provider-mysql
   # DataSource Config
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -38,12 +38,11 @@ dubbo:
     name: api-provider-mysql
   protocol:
     name: dubbo
-    port: -1
+    port: 20879
   registry:
-    id: nacos-registry
     address: nacos://192.168.50.129:8848
   scan:
-    base-packages: com.wsj.apiinnerinterface.service
+    base-packages: com.wsj.apiprovidermysql.serviceimpl
 
 mybatis-plus:
   configuration:

@@ -11,20 +11,19 @@ import com.wsj.apicommon.common.ResultUtils;
 import com.wsj.apicommon.constant.CommonConstant;
 import com.wsj.apicommon.constant.UserConstant;
 import com.wsj.apicommon.exception.BusinessException;
-import com.wsj.apiconsumerapp.model.dto.userinterfaceinfo.UserInterfaceInfoAddRequest;
-import com.wsj.apiconsumerapp.model.dto.userinterfaceinfo.UserInterfaceInfoQueryRequest;
-import com.wsj.apiconsumerapp.model.dto.userinterfaceinfo.UserInterfaceInfoUpdateRequest;
+import com.wsj.apicommon.model.dto.userinterfaceinfo.UserInterfaceInfoAddRequest;
+import com.wsj.apicommon.model.dto.userinterfaceinfo.UserInterfaceInfoQueryRequest;
+import com.wsj.apicommon.model.dto.userinterfaceinfo.UserInterfaceInfoUpdateRequest;
 import com.wsj.apicommon.service.UserInterfaceInfoService;
-import com.wsj.apicommon.service.UserService;
+import com.wsj.apiconsumerapp.service.UserService;
 import com.wsj.apicommon.model.entity.User;
 import com.wsj.apicommon.model.entity.UserInterfaceInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import javax.annotation.Resource;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 

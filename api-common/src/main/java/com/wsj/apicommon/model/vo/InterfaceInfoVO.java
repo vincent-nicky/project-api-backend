@@ -1,23 +1,23 @@
 package com.wsj.apicommon.model.vo;
 
 
-import com.wsj.apicommon.model.entity.Post;
+import com.wsj.apicommon.model.entity.InterfaceInfo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 帖子视图
+ * 接口信息封装视图
  *
  * @TableName product
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PostVO extends Post {
+public class InterfaceInfoVO extends InterfaceInfo {
 
     /**
-     * 是否已点赞
+     * 调用次数
      */
-    private Boolean hasThumb;
+    private Integer totalNum;
 
     private static final long serialVersionUID = 1L;
 }

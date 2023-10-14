@@ -1,9 +1,10 @@
 package com.wsj.apiinterface.controller;
 
-import com.wsj.apiclientsdk.model.ApiClientUser;
+import com.wsj.apiclientsdk.model.InterFaceRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 名称 API
@@ -25,7 +26,7 @@ public class NameController {
     }
 
     @PostMapping("/user")
-    public String getUsernameByPost(@RequestBody ApiClientUser apiClientUser, HttpServletRequest request) {
+    public String getUsernameByPost(@RequestBody Map interFaceRequest, HttpServletRequest request) {
 //        String accessKey = request.getHeader("accessKey");
 //        String nonce = request.getHeader("nonce");
 //        String timestamp = request.getHeader("timestamp");
@@ -48,7 +49,7 @@ public class NameController {
 //            throw new RuntimeException("无权限");
 //        }
         // todo 调用次数 + 1 invokeCount
-        String result = "POST 用户名字是" + apiClientUser.getUsername();
-        return result;
+        String param = (String) interFaceRequest.get("name");
+        return "POST 用户名字是：" + param;
     }
 }

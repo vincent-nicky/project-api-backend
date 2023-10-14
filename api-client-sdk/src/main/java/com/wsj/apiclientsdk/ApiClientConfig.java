@@ -1,6 +1,6 @@
 package com.wsj.apiclientsdk;
 
-import com.wsj.apiclientsdk.client.ApiClient;
+import com.wsj.apiclientsdk.client.MyApiClient;
 import lombok.Data;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -23,8 +23,8 @@ public class ApiClientConfig {
     private String secretKey;
 
     @Bean
-    public ApiClient apiClient() {
-        return new ApiClient(accessKey, secretKey);
+    public MyApiClient apiClient() {
+        return new MyApiClient(accessKey, secretKey);
     }
 
 }

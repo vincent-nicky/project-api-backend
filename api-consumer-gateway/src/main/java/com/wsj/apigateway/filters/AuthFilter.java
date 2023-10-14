@@ -23,10 +23,11 @@ public class AuthFilter {
         HttpHeaders headers = request.getHeaders();
         String accessKey = headers.getFirst("accessKey");
         String nonce = headers.getFirst("nonce");
+        String body = headers.getFirst("body");
         String timestamp = headers.getFirst("timestamp");
         String sign = headers.getFirst("sign");
-        String body = headers.getFirst("body");
 
+        // TODO 未理解 nonce 的作用
         if (nonce != null && Long.parseLong(nonce) > 10000L) {
             return null;
         }

@@ -8,16 +8,16 @@ import com.wsj.apicommon.common.DeleteRequest;
 import com.wsj.apicommon.common.ErrorCode;
 import com.wsj.apicommon.common.ResultUtils;
 import com.wsj.apicommon.exception.BusinessException;
+import com.wsj.apicommon.model.dto.user.*;
 import com.wsj.apicommon.model.entity.User;
-import com.wsj.apicommon.service.UserService;
-import com.wsj.apiconsumerapp.model.dto.user.*;
-import com.wsj.apiconsumerapp.model.vo.UserVO;
+import com.wsj.apicommon.model.vo.UserVO;
+import com.wsj.apiconsumerapp.service.UserService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/user")
 public class UserController {
 
-    @DubboReference
+    @Resource
     private UserService userService;
 
     // region 登录相关

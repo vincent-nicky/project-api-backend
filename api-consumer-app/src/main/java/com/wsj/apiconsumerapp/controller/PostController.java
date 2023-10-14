@@ -10,22 +10,20 @@ import com.wsj.apicommon.common.ErrorCode;
 import com.wsj.apicommon.common.ResultUtils;
 import com.wsj.apicommon.constant.CommonConstant;
 import com.wsj.apicommon.exception.BusinessException;
-import com.wsj.apiconsumerapp.model.dto.post.PostAddRequest;
-import com.wsj.apiconsumerapp.model.dto.post.PostQueryRequest;
-import com.wsj.apiconsumerapp.model.dto.post.PostUpdateRequest;
+import com.wsj.apicommon.model.dto.post.PostAddRequest;
+import com.wsj.apicommon.model.dto.post.PostQueryRequest;
+import com.wsj.apicommon.model.dto.post.PostUpdateRequest;
 import com.wsj.apicommon.model.entity.Post;
 import com.wsj.apicommon.service.PostService;
-import com.wsj.apicommon.service.UserService;
+import com.wsj.apiconsumerapp.service.UserService;
 import com.wsj.apicommon.model.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
