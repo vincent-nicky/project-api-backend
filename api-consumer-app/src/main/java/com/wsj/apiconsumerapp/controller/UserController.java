@@ -11,16 +11,18 @@ import com.wsj.apicommon.exception.BusinessException;
 import com.wsj.apicommon.model.dto.user.*;
 import com.wsj.apicommon.model.entity.User;
 import com.wsj.apicommon.model.vo.UserVO;
-import com.wsj.apiconsumerapp.service.UserService;
+import com.wsj.apiconsumerapp.manager.UserHolder;
+import com.wsj.apicommon.service.UserService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.wsj.apicommon.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * 用户接口
@@ -29,7 +31,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/user")
 public class UserController {
 
-    @Resource
+    @DubboReference
     private UserService userService;
 
     // region 登录相关
@@ -69,11 +71,20 @@ public class UserController {
         }
         String userAccount = userLoginRequest.getUserAccount();
         String userPassword = userLoginRequest.getUserPassword();
+
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        User user = userService.userLogin(userAccount, userPassword, request);
-        return ResultUtils.success(user);
+
+        // 用户信息脱敏
+        User user = userService.userLogin(userAccount, userPassword);
+
+        User tempUser = new User();
+        tempUser.setId(user.getId());
+
+        request.getSession().setAttribute(USER_LOGIN_STATE, tempUser);
+
+        return ResultUtils.success(tempUser);
     }
 
     /**
@@ -87,8 +98,9 @@ public class UserController {
         if (request == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean result = userService.userLogout(request);
-        return ResultUtils.success(result);
+        request.getSession().removeAttribute(USER_LOGIN_STATE);
+        UserHolder.remove();
+        return ResultUtils.success(true);
     }
 
     /**
@@ -99,7 +111,7 @@ public class UserController {
      */
     @GetMapping("/get/login")
     public BaseResponse<UserVO> getLoginUser(HttpServletRequest request) {
-        User user = userService.getLoginUser(request);
+        User user = UserHolder.get();
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(user, userVO);
         return ResultUtils.success(userVO);

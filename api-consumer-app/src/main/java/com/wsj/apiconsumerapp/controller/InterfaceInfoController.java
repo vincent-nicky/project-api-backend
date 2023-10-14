@@ -9,7 +9,8 @@ import com.wsj.apicommon.model.entity.InterfaceInfo;
 import com.wsj.apicommon.model.entity.User;
 import com.wsj.apicommon.model.enums.InterfaceInfoStatusEnum;
 import com.wsj.apicommon.service.InterfaceInfoService;
-import com.wsj.apiconsumerapp.service.UserService;
+import com.wsj.apiconsumerapp.manager.UserHolder;
+import com.wsj.apicommon.service.UserService;
 import com.wsj.apiconsumerapp.annotation.AuthCheck;
 import com.wsj.apiconsumerapp.manager.MyApiClientManager;
 import com.wsj.apicommon.model.dto.interfaceinfo.InterfaceInfoAddRequest;
@@ -61,7 +62,7 @@ public class InterfaceInfoController {
         BeanUtils.copyProperties(interfaceInfoAddRequest, interfaceInfo);
         // 校验
         interfaceInfoService.validInterfaceInfo(interfaceInfo, true);
-        User loginUser = userService.getLoginUser(request);
+        User loginUser = UserHolder.get();
         interfaceInfo.setUserId(loginUser.getId());
         boolean result = interfaceInfoService.save(interfaceInfo);
         if (!result) {
@@ -83,7 +84,7 @@ public class InterfaceInfoController {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        User user = userService.getLoginUser(request);
+        User user = UserHolder.get();
         long id = deleteRequest.getId();
         // 判断是否存在
         InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
@@ -91,7 +92,7 @@ public class InterfaceInfoController {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
         // 仅本人或管理员可删除
-        if (!oldInterfaceInfo.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
+        if (!oldInterfaceInfo.getUserId().equals(user.getId()) && !userService.isAdmin(UserHolder.get())) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
         boolean b = interfaceInfoService.removeById(id);
@@ -115,7 +116,7 @@ public class InterfaceInfoController {
         BeanUtils.copyProperties(interfaceInfoUpdateRequest, interfaceInfo);
         // 参数校验
         interfaceInfoService.validInterfaceInfo(interfaceInfo, false);
-        User user = userService.getLoginUser(request);
+        User user = UserHolder.get();
         long id = interfaceInfoUpdateRequest.getId();
         // 判断是否存在
         InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
@@ -123,7 +124,7 @@ public class InterfaceInfoController {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
         // 仅本人或管理员可修改
-        if (!oldInterfaceInfo.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
+        if (!oldInterfaceInfo.getUserId().equals(user.getId()) && !userService.isAdmin(UserHolder.get())) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
         boolean result = interfaceInfoService.updateById(interfaceInfo);
@@ -289,7 +290,7 @@ public class InterfaceInfoController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口已关闭");
         }
 
-        User loginUser = userService.getLoginUser(request);
+        User loginUser = UserHolder.get();
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
         // TODO 这里 interfaceUrl 应该接收前端所指定的url，interfaceParamsJson应该在前端处理好再传过来

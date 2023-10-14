@@ -12,3 +12,8 @@ app 是处理与前端的交互，发出的请求不需要经过网关，不具�
 gateway 网关是处理请求验证，因为不具备查库的能力，所以是服务消费者
 
 innerinterface 提供查库能力，是服务提供者
+
+
+2023.10.15
+
+不使用 HttpServletRequest request 记录用户数据，而是用 ThreadLocal

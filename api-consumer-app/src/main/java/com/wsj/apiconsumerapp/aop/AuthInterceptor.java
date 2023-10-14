@@ -4,7 +4,8 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.wsj.apiconsumerapp.annotation.AuthCheck;
 import com.wsj.apicommon.common.ErrorCode;
 import com.wsj.apicommon.exception.BusinessException;
-import com.wsj.apiconsumerapp.service.UserService;
+import com.wsj.apiconsumerapp.manager.UserHolder;
+import com.wsj.apicommon.service.UserService;
 import com.wsj.apicommon.model.entity.User;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -46,7 +47,7 @@ public class AuthInterceptor {
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
         HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
         // 当前登录用户
-        User user = userService.getLoginUser(request);
+        User user = UserHolder.get();
         // 拥有任意权限即通过
         if (CollectionUtils.isNotEmpty(anyRole)) {
             String userRole = user.getUserRole();

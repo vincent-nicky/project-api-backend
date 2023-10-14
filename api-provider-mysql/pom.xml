@@ -30,20 +30,31 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
-        <!--查询springboot与springcloud对应的版本：https://spring.io/projects/spring-cloud#learn    -->
         <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-dependencies</artifactId>
-            <version>2021.0.8</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
+
 
         <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo</artifactId>
         </dependency>
+
+<!--        &lt;!&ndash; Spring Cloud Nacos Service Discovery &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>-->
+<!--        </dependency>-->
+
+<!--        &lt;!&ndash; nacos配置中心依赖支持&ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.alibaba.nacos</groupId>
