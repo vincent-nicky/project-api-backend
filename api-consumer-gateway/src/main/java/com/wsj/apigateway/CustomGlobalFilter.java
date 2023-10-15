@@ -22,6 +22,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,13 +48,14 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 1. 请求日志
         ServerHttpRequest request = exchange.getRequest();
-        // TODO INTERFACE_HOST不能写死
-        String path = INTERFACE_HOST + request.getPath().value();
+//        String path = String.valueOf(request.getURI()); // 返回 http://localhost:8082/TestReq/MyServlet
+        String path = request.getPath().value(); // 返回 /TestReq/MyServlet
         String method = request.getMethod().toString();
         log.info("请求唯一标识：" + request.getId());
         log.info("请求路径：" + path);
         log.info("请求方法：" + method);
         log.info("请求参数：" + request.getQueryParams());
+        log.info("JSON数据：" + request.getHeaders().getFirst("interfaceDataJson"));
         String sourceAddress = request.getLocalAddress().getHostString();
         log.info("请求来源地址：" + sourceAddress);
         log.info("请求来源地址：" + request.getRemoteAddress());
@@ -82,6 +84,9 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         if(!interfaceFilter.validInvokeCount(interfaceInfo.getId(), invokeUser.getId())){
             return handleNoAuth(response);
         }
+        // 6. 添加所需的params或请求头
+        
+
         return handleResponse(exchange, chain, interfaceInfo.getId(), invokeUser.getId());
 
     }

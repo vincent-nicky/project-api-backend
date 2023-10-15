@@ -1,3 +1,4 @@
+# 官网教程：https://docs.spring.io/spring-cloud-gateway/docs/3.1.8/reference/html/#gateway-starter
 # 公共配置文件
 server:
   port: 8090
@@ -11,6 +12,8 @@ spring:
           uri: http://localhost:8123
           predicates:
             - Path=/api/**
+          filters:
+            - SetRequestHeader=X-ValidGateway-Header,wsjdegateway
 
 #        - id: add_request_header_route
 #          uri: http://localhost:8123

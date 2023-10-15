@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wsj.apicommon.common.ErrorCode;
 import com.wsj.apicommon.exception.BusinessException;
 import com.wsj.apicommon.model.entity.User;
-import com.wsj.apiprovidermysql.mapper.InnerUserMapper;
 import com.wsj.apiprovidermysql.mapper.UserMapper;
 import com.wsj.apicommon.service.UserService;
 import lombok.extern.slf4j.Slf4j;

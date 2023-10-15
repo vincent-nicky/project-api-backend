@@ -11,8 +11,8 @@ import com.wsj.apicommon.exception.BusinessException;
 import com.wsj.apicommon.model.dto.user.*;
 import com.wsj.apicommon.model.entity.User;
 import com.wsj.apicommon.model.vo.UserVO;
-import com.wsj.apiconsumerapp.manager.UserHolder;
 import com.wsj.apicommon.service.UserService;
+import com.wsj.apiconsumerapp.manager.UserHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
@@ -69,6 +69,14 @@ public class UserController {
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+
+        User tempUser = new User();
+        Object userIdObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        if (userIdObj != null) {
+            tempUser.setId(((User) userIdObj).getId());
+            return ResultUtils.success(tempUser);
+        }
+
         String userAccount = userLoginRequest.getUserAccount();
         String userPassword = userLoginRequest.getUserPassword();
 
@@ -79,7 +87,6 @@ public class UserController {
         // 用户信息脱敏
         User user = userService.userLogin(userAccount, userPassword);
 
-        User tempUser = new User();
         tempUser.setId(user.getId());
 
         request.getSession().setAttribute(USER_LOGIN_STATE, tempUser);

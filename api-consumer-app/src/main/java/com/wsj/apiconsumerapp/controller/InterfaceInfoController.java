@@ -8,6 +8,7 @@ import com.wsj.apicommon.exception.BusinessException;
 import com.wsj.apicommon.model.entity.InterfaceInfo;
 import com.wsj.apicommon.model.entity.User;
 import com.wsj.apicommon.model.enums.InterfaceInfoStatusEnum;
+import com.wsj.apicommon.model.vo.InterfacePageVO;
 import com.wsj.apicommon.service.InterfaceInfoService;
 import com.wsj.apiconsumerapp.manager.UserHolder;
 import com.wsj.apicommon.service.UserService;
@@ -172,27 +173,28 @@ public class InterfaceInfoController {
      */
     @GetMapping("/list/page")
     public BaseResponse<Page<InterfaceInfo>> listInterfaceInfoByPage(InterfaceInfoQueryRequest interfaceInfoQueryRequest, HttpServletRequest request) {
+        // 数据判空
         if (interfaceInfoQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        // 获取参数：第几页、每页多少条、排序列、排序方式、搜索内容
         InterfaceInfo interfaceInfoQuery = new InterfaceInfo();
         BeanUtils.copyProperties(interfaceInfoQueryRequest, interfaceInfoQuery);
-        long current = interfaceInfoQueryRequest.getCurrent();
-        long size = interfaceInfoQueryRequest.getPageSize();
-        String sortField = interfaceInfoQueryRequest.getSortField();
-        String sortOrder = interfaceInfoQueryRequest.getSortOrder();
-        String description = interfaceInfoQuery.getDescription();
         // description 需支持模糊搜索
         interfaceInfoQuery.setDescription(null);
+
+        // 构造要传递的数据
+        InterfacePageVO interfacePageVO = new InterfacePageVO();
+        BeanUtils.copyProperties(interfaceInfoQueryRequest, interfacePageVO);
+        interfacePageVO.setInterfaceInfoQuery(interfaceInfoQuery);
+
         // 限制爬虫
-        if (size > 50) {
+        if (interfacePageVO.getSize() > 50) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        QueryWrapper<InterfaceInfo> queryWrapper = new QueryWrapper<>(interfaceInfoQuery);
-        queryWrapper.like(StringUtils.isNotBlank(description), "description", description);
-        queryWrapper.orderBy(StringUtils.isNotBlank(sortField),
-                sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
-        Page<InterfaceInfo> interfaceInfoPage = interfaceInfoService.page(new Page<>(current, size), queryWrapper);
+
+        Page<InterfaceInfo> interfaceInfoPage = interfaceInfoService.interfaceInfoPage(interfacePageVO);
+
         return ResultUtils.success(interfaceInfoPage);
     }
 
@@ -275,27 +277,29 @@ public class InterfaceInfoController {
     @PostMapping("/invoke")
     public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest,
                                                     HttpServletRequest request) {
-//        if (interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() <= 0) {
-//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-//        }
-//        long id = interfaceInfoInvokeRequest.getId();
-//        String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
-//        // 判断是否存在
-//        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
-//        if (oldInterfaceInfo == null) {
-//            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
-//        }
-//        if (oldInterfaceInfo.getStatus() == InterfaceInfoStatusEnum.OFFLINE.getValue()) {
-//            throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口已关闭");
-//        }
+        if (interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+
+        long id = interfaceInfoInvokeRequest.getId();
+        String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
+        // 判断是否存在
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        if (oldInterfaceInfo.getStatus() == InterfaceInfoStatusEnum.OFFLINE.getValue()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口已关闭");
+        }
+
+        log.info("【userRequestParams】"+userRequestParams);
 
         User loginUser = UserHolder.get();
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
-        // TODO 这里 interfaceUrl 应该接收前端所指定的url，interfaceParamsJson应该在前端处理好再传过来, /api是什么，取决于网关，不是本项目的api
-        String interfaceParamsJson = "{\"name\":\"test\"}";
-        String resultInvoke =  myApiClientManager.invokeInterface(accessKey,secretKey,"/api/name/user",interfaceParamsJson);
-
+        // TODO interfaceParamsJson应该在前端处理好再传过来,
+        String interfaceParamsJson = "{\"params\": {\"name\": \"test\"},\"headers\": {\"userRole\": \"admin\",\"userStatus\": \"0\"}}";;
+        String resultInvoke =  myApiClientManager.invokeInterface(accessKey,secretKey,oldInterfaceInfo.getUrl(),interfaceParamsJson);
         return ResultUtils.success(resultInvoke);
     }
 
