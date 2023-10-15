@@ -15,11 +15,13 @@ api-provider-mysql 提供查库能力，是服务提供者
 
 # Todo List
 
-## [x] 重点在网关：流量染色
+- [x]  重点在网关：流量染色
+
+参考：
 
 ![img](https://cdn.jsdelivr.net/gh/vincent-nicky/image_store/blog/gateway_dynamic_staining.png)
 
-## 理解前端业务
+- [ ] 理解前端业务
 
 前端将参数封装成JSON（包含参数、请求头等数据）
 
