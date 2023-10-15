@@ -5,26 +5,38 @@ import com.wsj.apicommon.exception.BusinessException;
 import com.wsj.apicommon.model.entity.User;
 import com.wsj.apicommon.service.UserService;
 import com.wsj.apiconsumerapp.manager.UserHolder;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import static com.wsj.apicommon.constant.UserConstant.USER_LOGIN_STATE;
 
+@Aspect
 @Component
-public class IsLoginInterceptor implements HandlerInterceptor {
+@Slf4j
+public class IsLoginInterceptor {
 
     @DubboReference
     private UserService userService;
 
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    @Around("execution(* com.wsj.apiconsumerapp.controller.*.*(..)) &&" +
+            "!execution(* com.wsj.apiconsumerapp.controller.UserController.userLogin(..)) &&" +
+            "!execution(* com.wsj.apiconsumerapp.controller.UserController.userRegister(..))"
+    )
+    public Object doInterceptor(ProceedingJoinPoint point) throws Throwable {
+        // 获取 session
+        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest httpServletRequest = ((ServletRequestAttributes) requestAttributes).getRequest();
         // 先判断是否已登录
-        Object userIdObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        Object userIdObj = httpServletRequest.getSession().getAttribute(USER_LOGIN_STATE);
         User userOnlyId = (User) userIdObj;
         if (userOnlyId == null || userOnlyId.getId() == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
@@ -36,12 +48,10 @@ public class IsLoginInterceptor implements HandlerInterceptor {
         }
         // 存入Threadlocal
         UserHolder.set(currentUser);
-        return true;
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        // 执行原方法
+        Object result = point.proceed();
         // 释放空间
         UserHolder.remove();
+        return result;
     }
 }

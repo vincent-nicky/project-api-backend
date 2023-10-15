@@ -11,4 +11,6 @@ import com.wsj.apicommon.model.entity.InterfaceInfo;
 public interface InterfaceInfoService extends IService<InterfaceInfo> {
 
     void validInterfaceInfo(InterfaceInfo interfaceInfo, boolean add);
+
+    InterfaceInfo getInterfaceInfo(String url, String method);
 }

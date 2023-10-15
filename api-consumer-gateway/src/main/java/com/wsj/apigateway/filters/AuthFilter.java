@@ -2,23 +2,28 @@ package com.wsj.apigateway.filters;
 
 import com.wsj.apiclientsdk.utils.SignUtils;
 import com.wsj.apicommon.model.entity.User;
-import com.wsj.apicommon.service.InnerUserService;
+import com.wsj.apicommon.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.stereotype.Component;
 
 @Slf4j
+@Component
 public class AuthFilter {
 
     @DubboReference
-    private static InnerUserService innerUserService;
+    private UserService userService;
 
-    // 参考：https://blog.csdn.net/yqwang75457/article/details/117815474
-    // https://blog.51cto.com/u_16123065/6437261
-    // https://juejin.cn/post/6844903807839649806
 
-    public static User authFilter(ServerHttpRequest request){
+    /**
+     * 判断用户是否可进行接口调用
+     *
+     * @param request
+     * @return
+     */
+    public User doAuth(ServerHttpRequest request) {
 
         HttpHeaders headers = request.getHeaders();
         String accessKey = headers.getFirst("accessKey");
@@ -33,7 +38,7 @@ public class AuthFilter {
         }
 
         // 根据ak获取用户信息
-        User invokeUser = innerUserService.getInvokeUser(accessKey);
+        User invokeUser = userService.getInvokeUser(accessKey);
         if (invokeUser == null) {
             return null;
         }

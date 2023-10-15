@@ -54,7 +54,7 @@ public class InterfaceInfoController {
      * @return
      */
     @PostMapping("/add")
-    public BaseResponse<Long> addInterfaceInfo(@RequestBody InterfaceInfoAddRequest interfaceInfoAddRequest, HttpServletRequest request) {
+    public BaseResponse<String> addInterfaceInfo(@RequestBody InterfaceInfoAddRequest interfaceInfoAddRequest, HttpServletRequest request) {
         if (interfaceInfoAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -68,8 +68,7 @@ public class InterfaceInfoController {
         if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
         }
-        long newInterfaceInfoId = interfaceInfo.getId();
-        return ResultUtils.success(newInterfaceInfoId);
+        return ResultUtils.success(interfaceInfo.getUrl());
     }
 
     /**
@@ -276,24 +275,24 @@ public class InterfaceInfoController {
     @PostMapping("/invoke")
     public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest,
                                                     HttpServletRequest request) {
-        if (interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() <= 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        long id = interfaceInfoInvokeRequest.getId();
-        String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
-        // 判断是否存在
-        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
-        if (oldInterfaceInfo == null) {
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
-        }
-        if (oldInterfaceInfo.getStatus() == InterfaceInfoStatusEnum.OFFLINE.getValue()) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口已关闭");
-        }
+//        if (interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() <= 0) {
+//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+//        }
+//        long id = interfaceInfoInvokeRequest.getId();
+//        String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
+//        // 判断是否存在
+//        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+//        if (oldInterfaceInfo == null) {
+//            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+//        }
+//        if (oldInterfaceInfo.getStatus() == InterfaceInfoStatusEnum.OFFLINE.getValue()) {
+//            throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口已关闭");
+//        }
 
         User loginUser = UserHolder.get();
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
-        // TODO 这里 interfaceUrl 应该接收前端所指定的url，interfaceParamsJson应该在前端处理好再传过来
+        // TODO 这里 interfaceUrl 应该接收前端所指定的url，interfaceParamsJson应该在前端处理好再传过来, /api是什么，取决于网关，不是本项目的api
         String interfaceParamsJson = "{\"name\":\"test\"}";
         String resultInvoke =  myApiClientManager.invokeInterface(accessKey,secretKey,"/api/name/user",interfaceParamsJson);
 

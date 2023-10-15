@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wsj.apicommon.common.ErrorCode;
 import com.wsj.apicommon.exception.BusinessException;
 import com.wsj.apicommon.model.entity.User;
+import com.wsj.apiprovidermysql.mapper.InnerUserMapper;
 import com.wsj.apiprovidermysql.mapper.UserMapper;
 import com.wsj.apicommon.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -113,6 +114,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public boolean isAdmin(User user) {
         // 仅管理员可查询
         return user != null && ADMIN_ROLE.equals(user.getUserRole());
+    }
+
+    @Override
+    public User getInvokeUser(String accessKey) {
+        if (StringUtils.isAnyBlank(accessKey)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("accessKey", accessKey);
+        return userMapper.selectOne(queryWrapper);
     }
 }
 

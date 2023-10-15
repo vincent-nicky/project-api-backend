@@ -99,7 +99,6 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         request.getSession().removeAttribute(USER_LOGIN_STATE);
-        UserHolder.remove();
         return ResultUtils.success(true);
     }
 

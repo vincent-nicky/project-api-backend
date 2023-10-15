@@ -12,9 +12,11 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
  * 入口类
  *
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+        DataSourceAutoConfiguration.class,
+        DataSourceTransactionManagerAutoConfiguration.class,
+        HibernateJpaAutoConfiguration.class})
 @EnableDubbo
-@MapperScan("com.wsj.apiconsumerapp.mapper")
 public class ApiConsumerApp {
     public static void main(String[] args) {
         SpringApplication.run(ApiConsumerApp.class, args);

@@ -23,4 +23,6 @@ public interface UserInterfaceInfoService extends IService<UserInterfaceInfo> {
     boolean invokeCount(long interfaceInfoId, long userId);
 
     List<UserInterfaceInfo>  listTopInvokeInterfaceInfo(int limit);
+
+    boolean ValidCount(long interfaceId, long userId);
 }

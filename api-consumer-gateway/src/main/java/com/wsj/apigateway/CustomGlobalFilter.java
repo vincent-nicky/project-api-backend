@@ -1,22 +1,18 @@
-package com.wsj.apigateway.filters;
+package com.wsj.apigateway;
 
-import com.wsj.apiclientsdk.utils.SignUtils;
 import com.wsj.apicommon.model.entity.InterfaceInfo;
 import com.wsj.apicommon.model.entity.User;
-import com.wsj.apicommon.service.InnerInterfaceInfoService;
-import com.wsj.apicommon.service.InnerUserInterfaceInfoService;
-import com.wsj.apicommon.service.InnerUserService;
 import com.wsj.apigateway.filters.AuthFilter;
+import com.wsj.apigateway.filters.InterfaceFilter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.DubboReference;
 import org.reactivestreams.Publisher;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -33,29 +29,25 @@ import java.util.List;
 
 /**
  * 全局过滤
- *
  */
 @Slf4j
 @Component
 public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
-    @DubboReference
-    private InnerUserService innerUserService;
-
-    @DubboReference
-    private InnerInterfaceInfoService innerInterfaceInfoService;
-
-    @DubboReference
-    private InnerUserInterfaceInfoService innerUserInterfaceInfoService;
-
     private static final List<String> IP_WHITE_LIST = Arrays.asList("127.0.0.1");
-
     private static final String INTERFACE_HOST = "http://localhost:8123";
+
+    @Autowired
+    private AuthFilter authFilter;
+
+    @Autowired
+    private InterfaceFilter interfaceFilter;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 1. 请求日志
         ServerHttpRequest request = exchange.getRequest();
+        // TODO INTERFACE_HOST不能写死
         String path = INTERFACE_HOST + request.getPath().value();
         String method = request.getMethod().toString();
         log.info("请求唯一标识：" + request.getId());
@@ -75,25 +67,21 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
 //        }
 
         // 3. 用户鉴权（判断 ak、sk 是否合法）
-        User invokeUser = AuthFilter.authFilter(request);
+        User invokeUser = authFilter.doAuth(request);
         if (invokeUser == null) {
             return handleNoAuth(response);
         }
 
-        // 4. 请求的模拟接口是否存在，以及请求方法是否匹配
-        InterfaceInfo interfaceInfo = null;
-        try {
-            interfaceInfo = innerInterfaceInfoService.getInterfaceInfo(path, method);
-        } catch (Exception e) {
-            log.error("getInterfaceInfo error", e);
-        }
+        // 4. 请求的模拟接口是否存在，以及请求方法是否匹配，以及是否还有调用次数
+        InterfaceInfo interfaceInfo = interfaceFilter.isValid(path, method);
         if (interfaceInfo == null) {
             return handleNoAuth(response);
         }
-        // todo 是否还有调用次数
-        // 5. 请求转发，调用模拟接口 + 响应日志
-        //        Mono<Void> filter = chain.filter(exchange);
-        //        return filter;
+
+        // 5. 检查接口调用次数是否足够
+        if(!interfaceFilter.validInvokeCount(interfaceInfo.getId(), invokeUser.getId())){
+            return handleNoAuth(response);
+        }
         return handleResponse(exchange, chain, interfaceInfo.getId(), invokeUser.getId());
 
     }
@@ -126,11 +114,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
                             return super.writeWith(
                                     fluxBody.map(dataBuffer -> {
                                         // 7. 调用成功，接口调用次数 + 1 invokeCount
-                                        try {
-                                            innerUserInterfaceInfoService.invokeCount(interfaceInfoId, userId);
-                                        } catch (Exception e) {
-                                            log.error("invokeCount error", e);
-                                        }
+                                        interfaceFilter.doInvokeCount(interfaceInfoId, userId);
                                         byte[] content = new byte[dataBuffer.readableByteCount()];
                                         dataBuffer.read(content);
                                         DataBufferUtils.release(dataBuffer);//释放掉内存

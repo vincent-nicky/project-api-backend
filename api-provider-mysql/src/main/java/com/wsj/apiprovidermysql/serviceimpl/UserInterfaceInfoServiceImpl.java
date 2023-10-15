@@ -1,5 +1,6 @@
 package com.wsj.apiprovidermysql.serviceimpl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -57,6 +58,14 @@ public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoM
         return list;
     }
 
+    @Override
+    public boolean ValidCount(long interfaceId, long userId) {
+        QueryWrapper<UserInterfaceInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("interfaceInfoId", interfaceId);
+        queryWrapper.eq("userId", userId);
+        UserInterfaceInfo userInterfaceInfo = this.getOne(queryWrapper);
+        return userInterfaceInfo != null && userInterfaceInfo.getLeftNum() > 0;
+    }
 }
 
 
